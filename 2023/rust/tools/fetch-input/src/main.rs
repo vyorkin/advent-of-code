@@ -48,7 +48,7 @@ fn main() -> anyhow::Result<()> {
         .get(url)
         .header(COOKIE, format!("session={session}"))
         .send()
-        .context("Failed to send response")?
+        .context("Failed to send request")?
         .text()
         .context("Failed to get response text")?;
 
