@@ -1,6 +1,10 @@
 use nom::{IResult, Parser, bytes::complete::tag, character::complete, sequence::preceded};
 use reqwest::{blocking::Client, header::COOKIE};
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{
+    fs::{File, create_dir_all},
+    io::Write,
+    path::PathBuf,
+};
 
 #[derive(clap::Parser, Debug)]
 #[clap(version)]
@@ -40,8 +44,9 @@ fn main() -> anyhow::Result<()> {
         .exit()
     };
 
-    let url = format!("http://adventofcode.com/{}/day/{}/input", args.year, day);
+    let url = format!("https://adventofcode.com/{}/day/{}/input", args.year, day);
     println!("Getting input from `{}`", url);
+    println!("session={}", session);
 
     let client = Client::new();
     let response = client
@@ -54,13 +59,14 @@ fn main() -> anyhow::Result<()> {
 
     let input_data = response.as_bytes();
 
-    for filename in ["input1.txt", "input2.txt"] {
-        let file_path = args
-            .current_working_directory
-            .join(&args.day)
-            .join(filename);
+    let dir_path = args.current_working_directory.join(&args.day);
+    create_dir_all(&dir_path)
+        .with_context(|| format!("Failed to create directory {}", dir_path.display()))?;
 
-        let mut file = File::create(&file_path).expect("Should create file");
+    for filename in ["input1.txt", "input2.txt"] {
+        let file_path = dir_path.join(filename);
+        let mut file = File::create(&file_path)
+            .with_context(|| format!("Should create file {}", file_path.display()))?;
         file.write_all(input_data).expect("Should write input file");
 
         println!("Wrote {}", file_path.display());

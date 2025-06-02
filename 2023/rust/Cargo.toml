@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+
+members = ["day-*"]
+default-members = ["day-*"]
+
+[workspace.dependencies]
+thiserror = "2.0"
+miette = { version = "7.6", features = ["fancy"] }
+glam = "0.30"
+nom = "8.0"
+itertools = "0.14"
+rayon = "1.10"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
+rstest = "0.25"
+rstest_reuse = "0.7.0"
+test-log = { version = "0.2", default-features = false, features = ["trace"] }
+divan = "0.1"
