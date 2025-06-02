@@ -1,4 +1,0 @@
-set dotenv-load
-
-fetch-input year day:
-  cargo run --manifest-path ./tools/fetch-input/Cargo.toml -- --year {{year}} --day {{day}} --current-working-directory {{justfile_directory()}}
