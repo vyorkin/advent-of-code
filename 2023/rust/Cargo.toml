@@ -2,8 +2,13 @@
 members = [
     "day-*",
     "day-01",
+    "tools/fetch-input",
 ]
-default-members = ["day-*"]
+exclude = ["day-template"]
+default-members = [
+    "day-*",
+    "tools/fetch-input",
+]
 resolver = "2"
 
 [workspace.dependencies]
