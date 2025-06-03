@@ -1,5 +1,7 @@
 set dotenv-load
 
+year := "2023"
+
 work day part:
   cargo watch -w {{day}} -x "check -p {{day}}" -s "just test {{day}} {{part}}" -s "just lint {{day}}"
 
@@ -17,7 +19,7 @@ bench day part:
 
 create day:
   cargo generate --path ./day-template --name {{day}}
-  just fetch-input {{day}}
+  just fetch-input {{year}} {{day}}
 
 fetch-input year day:
   cargo run --manifest-path ./tools/fetch-input/Cargo.toml -- --year {{year}} --day {{day}} --current-working-directory {{justfile_directory()}}
