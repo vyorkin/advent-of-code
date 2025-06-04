@@ -9,7 +9,7 @@ lint day:
   cargo clippy -p {{day}}
 
 test day part:
-  cargo nexttest run -p {{day}} {{part}}
+  cargo nextest run -p {{day}} {{part}}
 
 bench-all:
   cargo bench -q > benchmarks.txt
