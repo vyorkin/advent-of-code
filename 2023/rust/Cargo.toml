@@ -1,8 +1,7 @@
 [workspace]
 members = [
     "day-*",
-    "day-01",
-    "day-02",
+    "day-03",
     "tools/fetch-input",
 ]
 exclude = ["day-template"]

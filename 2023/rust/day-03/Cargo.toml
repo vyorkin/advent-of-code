@@ -1,6 +1,6 @@
 [package]
-name = "{{project-name}}"
-authors = ["{{authors}}"]
+name = "day-03"
+authors = ["Vasiliy Yorkin <vasiliy.yorkin@gmail.com>"]
 version = "0.1.0"
 edition = "2024"
 
@@ -18,11 +18,11 @@ rstest.workspace = true
 test-log.workspace = true
 
 [[bench]]
-name = "{{project-name}}-bench-divan"
+name = "day-03-bench-divan"
 path = "benches/benchmarks-divan.rs"
 harness = false
 
 [[bench]]
-name = "{{project-name}}-bench-criterion"
+name = "day-03-bench-criterion"
 path = "benches/benchmarks-criterion.rs"
 harness = false
