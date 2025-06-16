@@ -1,0 +1,28 @@
+set dotenv-load
+
+year := "2023"
+
+work day part:
+  cargo watch -w {{day}} -x "check -p {{day}}" -s "just test {{day}} {{part}}" -s "just lint {{day}}"
+
+lint day:
+  cargo clippy -p {{day}}
+
+test day part:
+  cargo nextest run -p {{day}} {{part}}
+
+bench-all:
+  cargo bench -q > benchmarks.txt
+
+bench-divan day part:
+    cargo bench --bench {{day}}-bench-divan {{part}} >> {{day}}.bench.divan.txt
+
+bench-criterion day part:
+    cargo bench --bench {{day}}-bench-criterion {{part}} >> {{day}}.bench.criterion.txt
+
+create day:
+  cargo generate --path ./day-template --name {{day}}
+  just fetch-input {{year}} {{day}}
+
+fetch-input year day:
+  cargo run --manifest-path ./tools/fetch-input/Cargo.toml -- --year {{year}} --day {{day}} --current-working-directory {{justfile_directory()}}

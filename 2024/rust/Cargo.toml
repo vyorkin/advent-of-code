@@ -1,0 +1,43 @@
+[workspace]
+members = [
+    "day-*",
+    "day-01",
+    "tools/fetch-input",
+]
+exclude = ["day-template"]
+default-members = [
+    "day-*",
+    "tools/fetch-input",
+]
+resolver = "2"
+
+[workspace.dependencies]
+divan = "0.1"
+glam = "0.30"
+itertools = "0.14"
+nom = "8.0"
+rayon = "1.10"
+rstest = "0.25"
+rstest_reuse = "0.7.0"
+thiserror = "2.0"
+tracing = "0.1"
+
+[workspace.dependencies.criterion]
+version = "0.6"
+features = ["html_reports"]
+
+[workspace.dependencies.miette]
+version = "7.6"
+features = ["fancy"]
+
+[workspace.dependencies.test-log]
+version = "0.2"
+features = ["trace"]
+default-features = false
+
+[workspace.dependencies.tracing-subscriber]
+version = "0.3"
+features = [
+    "fmt",
+    "env-filter",
+]

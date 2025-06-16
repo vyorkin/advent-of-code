@@ -1,0 +1,29 @@
+[package]
+name = "day-01"
+authors = ["Vasiliy Yorkin <vasiliy.yorkin@gmail.com>"]
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+thiserror.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+itertools.workspace = true
+nom.workspace = true
+miette.workspace = true
+
+[dev-dependencies]
+divan.workspace = true
+criterion.workspace = true
+rstest.workspace = true
+test-log.workspace = true
+
+[[bench]]
+name = "day-01-bench-divan"
+path = "benches/benchmarks-divan.rs"
+harness = false
+
+[[bench]]
+name = "day-01-bench-criterion"
+path = "benches/benchmarks-criterion.rs"
+harness = false
