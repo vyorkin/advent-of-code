@@ -46,7 +46,8 @@ where
 }
 
 fn is_safe(xs: &[u32]) -> bool {
-    is_safe_monotonic(xs, |curr, prev| curr > prev)
+    xs.len() < 2
+        || is_safe_monotonic(xs, |curr, prev| curr > prev)
         || is_safe_monotonic(xs, |curr, prev| curr < prev)
 }
 
