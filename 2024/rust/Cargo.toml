@@ -2,6 +2,7 @@
 members = [
     "day-*",
     "day-01",
+    "day-02",
     "tools/fetch-input",
 ]
 exclude = ["day-template"]
