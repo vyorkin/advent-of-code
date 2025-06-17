@@ -15,23 +15,38 @@ pub enum AocError {
 mod parser {
     use nom::{
         IResult, Parser,
-        bytes::complete::tag,
-        character::complete::u32,
-        sequence::{delimited, separated_pair},
+        branch::alt,
+        bytes::complete::{tag, take, take_until},
+        character::{char, complete::u32},
+        combinator::map,
+        multi::many0,
+        sequence::{delimited, preceded, separated_pair},
     };
 
     use super::*;
 
     fn mul(input: &str) -> IResult<&str, (u32, u32), ()> {
-        let mut parser = delimited(
+        delimited(
             tag("mul("),
-            separated_pair(u32, tag(","), u32),
-            tag(")"),
-        );
-        parser.parse(input)
+            separated_pair(u32, char(','), u32),
+            char(')'),
+        )
+        .parse(input)
     }
 
-    fn mul_ops(
+    fn find_mul(
+        input: &str,
+    ) -> IResult<&str, (u32, u32), ()> {
+        preceded(
+            take_until("mul("),
+            map(mul, |pair| pair),
+        )
+        .parse(input)
+    }
+
+    #[allow(dead_code)]
+    #[deprecated = "Use mul_ops, which is implemented exclusively with parser combinators"]
+    fn mul_ops_deprecated(
         input: &str,
     ) -> IResult<&str, Vec<(u32, u32)>, ()> {
         let mut rest = input;
@@ -50,6 +65,22 @@ mod parser {
             }
         }
         Ok(("", results))
+    }
+
+    fn mul_ops(
+        input: &str,
+    ) -> IResult<&str, Vec<(u32, u32)>, ()> {
+        let skip_one = map(take(1usize), |_| None);
+        let next_mul = map(find_mul, Some);
+
+        let (rest, matches) =
+            many0(alt((next_mul, skip_one)))
+                .parse(input)?;
+
+        let results =
+            matches.into_iter().flatten().collect();
+
+        Ok((rest, results))
     }
 
     pub fn parse(
