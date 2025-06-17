@@ -44,29 +44,6 @@ mod parser {
         .parse(input)
     }
 
-    #[allow(dead_code)]
-    #[deprecated = "Use mul_ops, which is implemented exclusively with parser combinators"]
-    fn mul_ops_deprecated(
-        input: &str,
-    ) -> IResult<&str, Vec<(u32, u32)>, ()> {
-        let mut rest = input;
-        let mut results = Vec::new();
-
-        while let Some(pos) = rest.find("mul(") {
-            let after = &rest[pos..];
-            match mul(after) {
-                Ok((next, pair)) => {
-                    results.push(pair);
-                    rest = next;
-                }
-                Err(_) => {
-                    rest = &after[1..];
-                }
-            }
-        }
-        Ok(("", results))
-    }
-
     fn mul_ops(
         input: &str,
     ) -> IResult<&str, Vec<(u32, u32)>, ()> {
