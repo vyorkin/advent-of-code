@@ -13,41 +13,12 @@ pub enum AocError {
 }
 
 mod parser {
-    use nom::{
-        IResult, Parser,
-        bytes::complete::tag,
-        character::complete::u32,
-        sequence::{delimited, separated_pair},
-    };
-
     use super::*;
 
-    fn mul(input: &str) -> IResult<&str, (u32, u32), ()> {
-        let mut parser = delimited(
-            tag("mul("),
-            separated_pair(u32, tag(","), u32),
-            tag(")"),
-        );
-        parser.parse(input)
-    }
-
-    fn mul_ops(
-        input: &str,
-    ) -> IResult<&str, Vec<(u32, u32)>, ()> {
-        let mut enabled = true;
-
-        let mut rest = input;
-        let mut results = Vec::new();
-
-        Ok(("", results))
-    }
-
     pub fn parse(
-        input: &str,
+        _input: &str,
     ) -> Result<Vec<(u32, u32)>, AocError> {
-        mul_ops(input).map(|x| x.1).map_err(|_| {
-            AocError::ParseError(input.to_string())
-        })
+        todo!()
     }
 }
 
@@ -60,7 +31,22 @@ pub fn process(input: &str) -> miette::Result<String> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
+
+    #[rstest]
+    #[case("mul(2,3)don't()-mul(3,3)+do()mul(2,2)", "10")]
+    #[case(
+        "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))",
+        "48"
+    )]
+    fn test_parser(
+        #[case] _input: &str,
+        #[case] _expected: &str,
+    ) -> miette::Result<()> {
+        todo!()
+    }
 
     #[test]
     fn test_process() -> miette::Result<()> {
