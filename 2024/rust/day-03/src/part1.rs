@@ -2,7 +2,7 @@ use miette::Diagnostic;
 use thiserror::Error;
 
 #[derive(Error, Debug, Diagnostic)]
-pub enum AocError {
+enum AocError {
     #[error(transparent)]
     #[diagnostic(code(aoc::io_error))]
     IoError(#[from] std::io::Error),
@@ -12,11 +12,19 @@ pub enum AocError {
     ParseError(String),
 }
 
+#[derive(Debug)]
+enum Opcode {
+    Mul(u32, u32),
+}
+
 mod parser {
     use nom::{
         IResult, Parser,
         branch::alt,
-        bytes::complete::{tag, take, take_until},
+        bytes::{
+            complete::{take, take_until},
+            tag,
+        },
         character::{char, complete::u32},
         combinator::map,
         multi::many0,
@@ -25,33 +33,34 @@ mod parser {
 
     use super::*;
 
-    fn mul(input: &str) -> IResult<&str, (u32, u32), ()> {
+    fn mul_opcode(
+        input: &str,
+    ) -> IResult<&str, Opcode, ()> {
         delimited(
             tag("mul("),
             separated_pair(u32, char(','), u32),
             char(')'),
         )
+        .map(|(x, y)| Opcode::Mul(x, y))
         .parse(input)
     }
 
-    fn find_mul(
-        input: &str,
-    ) -> IResult<&str, (u32, u32), ()> {
+    fn find_mul(input: &str) -> IResult<&str, Opcode, ()> {
         preceded(
             take_until("mul("),
-            map(mul, |pair| pair),
+            map(mul_opcode, |pair| pair),
         )
         .parse(input)
     }
 
-    fn mul_ops(
+    fn opcodes(
         input: &str,
-    ) -> IResult<&str, Vec<(u32, u32)>, ()> {
-        let skip_one = map(take(1usize), |_| None);
-        let next_mul = map(find_mul, Some);
+    ) -> IResult<&str, Vec<Opcode>, ()> {
+        let skip_one_char = map(take(1usize), |_| None);
+        let next_opcode = map(find_mul, Some);
 
         let (rest, matches) =
-            many0(alt((next_mul, skip_one)))
+            many0(alt((next_opcode, skip_one_char)))
                 .parse(input)?;
 
         let results =
@@ -62,8 +71,8 @@ mod parser {
 
     pub fn parse(
         input: &str,
-    ) -> Result<Vec<(u32, u32)>, AocError> {
-        mul_ops(input).map(|x| x.1).map_err(|_| {
+    ) -> Result<Vec<Opcode>, AocError> {
+        opcodes(input).map(|x| x.1).map_err(|_| {
             AocError::ParseError(input.to_string())
         })
     }
@@ -72,7 +81,10 @@ mod parser {
 #[tracing::instrument]
 pub fn process(input: &str) -> miette::Result<String> {
     let ops = parser::parse(input)?;
-    let sum = ops.iter().fold(0, |acc, (x, y)| acc + x * y);
+    let sum =
+        ops.iter().fold(0, |acc, opcode| match opcode {
+            Opcode::Mul(x, y) => acc + x * y,
+        });
     Ok(sum.to_string())
 }
 
