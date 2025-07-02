@@ -385,7 +385,6 @@ dependencies = [
  "divan",
  "itertools 0.14.0",
  "miette",
- "nom",
  "rstest",
  "test-log",
  "thiserror",

@@ -9,7 +9,6 @@ thiserror.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 itertools.workspace = true
-nom.workspace = true
 miette.workspace = true
 
 [dev-dependencies]
