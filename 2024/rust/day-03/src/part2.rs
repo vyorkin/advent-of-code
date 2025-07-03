@@ -3,10 +3,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug, Diagnostic)]
 enum AocError {
-    #[error(transparent)]
-    #[diagnostic(code(aoc::io_error))]
-    IoError(#[from] std::io::Error),
-
     #[error("Parse error:\n`{0}`.\nInput: `{1}`")]
     #[diagnostic(code(aoc::parser_error))]
     ParseError(String, String),
