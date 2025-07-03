@@ -28,7 +28,7 @@ pub fn parse_puzzle(
     separated_pair(parse_rules, tag("\n\n"), parse_updates)
         .map(|(rules, pages)| Puzzle {
             rules,
-            updates: pages,
+            lines: pages,
         })
         .parse(input)
 }
@@ -103,7 +103,7 @@ mod tests {
                 (75, 13),
                 (53, 13),
             ],
-            updates: vec![
+            lines: vec![
                 vec![75, 47, 61, 53, 29],
                 vec![97, 61, 53, 29, 13],
                 vec![75, 29, 13],
