@@ -1,7 +1,45 @@
+use nom::{
+    IResult, Parser,
+    bytes::complete::tag,
+    character::complete::{newline, u32},
+    multi::separated_list1,
+    sequence::separated_pair,
+};
+
 use crate::{Puzzle, error::AocError};
 
+pub fn parse_rules(
+    input: &str,
+) -> IResult<&str, Vec<(u32, u32)>, ()> {
+    let rule = separated_pair(u32, tag("|"), u32);
+    separated_list1(newline, rule).parse(input)
+}
+
+pub fn parse_updates(
+    input: &str,
+) -> IResult<&str, Vec<Vec<u32>>, ()> {
+    let pages = separated_list1(tag(","), u32);
+    separated_list1(newline, pages).parse(input)
+}
+
+pub fn parse_puzzle(
+    input: &str,
+) -> IResult<&str, Puzzle, ()> {
+    separated_pair(parse_rules, tag("\n\n"), parse_updates)
+        .map(|(rules, pages)| Puzzle {
+            rules,
+            updates: pages,
+        })
+        .parse(input)
+}
+
 pub fn parse(input: &str) -> Result<Puzzle, AocError> {
-    todo!()
+    parse_puzzle(input).map(|x| x.1).map_err(|e| {
+        AocError::ParseError(
+            e.to_string(),
+            input.to_string(),
+        )
+    })
 }
 
 #[cfg(test)]
@@ -43,6 +81,7 @@ mod tests {
 
         let expected = Puzzle {
             rules: vec![
+                (47, 53),
                 (97, 13),
                 (97, 61),
                 (97, 47),
@@ -64,7 +103,7 @@ mod tests {
                 (75, 13),
                 (53, 13),
             ],
-            pages: vec![
+            updates: vec![
                 vec![75, 47, 61, 53, 29],
                 vec![97, 61, 53, 29, 13],
                 vec![75, 29, 13],

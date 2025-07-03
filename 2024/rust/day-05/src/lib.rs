@@ -6,5 +6,5 @@ pub mod part2;
 #[derive(Debug, PartialEq)]
 pub struct Puzzle {
     pub rules: Vec<(u32, u32)>,
-    pub pages: Vec<Vec<u32>>,
+    pub updates: Vec<Vec<u32>>,
 }
