@@ -1,4 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    cmp::Ordering,
+    collections::{HashMap, HashSet},
+};
 
 use crate::parser;
 
@@ -24,31 +27,54 @@ pub fn process(input: &str) -> miette::Result<String> {
     //
     // 75,47,61,53,29
 
-    let filtered_lines: Vec<Vec<u32>> = puzzle
+    // 75,97,47,61,53 => 97,75,47,61,53
+    // 61,13,29       => 61,29,13
+    // 97,13,75,29,47 => 97,75,47,29,13
+
+    let fixed_lines: Vec<Vec<u32>> = puzzle
         .lines
         .into_iter()
         .filter(|line| {
-            line.iter().enumerate().all(|(i, page)| {
+            line.iter().enumerate().any(|(i, page)| {
                 let suffix = &line[i + 1..];
-                let valid_suffix = suffix.iter().all(|x| {
-                    rules.get(x).is_none_or(|set| {
-                        !set.contains(page)
-                    })
-                });
+                let invalid_suffix =
+                    suffix.iter().any(|x| {
+                        rules.get(x).is_some_and(|set| {
+                            set.contains(page)
+                        })
+                    });
 
                 let prefix = &line[..i];
-                let valid_prefix = prefix.iter().all(|x| {
-                    rev_rules.get(x).is_none_or(|set| {
-                        !set.contains(page)
-                    })
-                });
+                let invalid_prefix =
+                    prefix.iter().any(|x| {
+                        rev_rules.get(x).is_some_and(
+                            |set| set.contains(page),
+                        )
+                    });
 
-                valid_prefix && valid_suffix
+                invalid_prefix || invalid_suffix
             })
+        })
+        // .inspect(|line| {
+        //     dbg!(line);
+        // })
+        .map(|line| {
+            let mut line = line.clone();
+            line.sort_by(|a, b| {
+                if rules
+                    .get(a)
+                    .is_some_and(|pages| pages.contains(b))
+                {
+                    Ordering::Less
+                } else {
+                    Ordering::Greater
+                }
+            });
+            line
         })
         .collect();
 
-    let middles: Vec<u32> = filtered_lines
+    let middles: Vec<u32> = fixed_lines
         .iter()
         .map(|line| line[line.len() / 2])
         .collect();
