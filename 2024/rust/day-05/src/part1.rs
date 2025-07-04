@@ -29,19 +29,19 @@ pub fn process(input: &str) -> miette::Result<String> {
         .into_iter()
         .filter(|line| {
             line.iter().enumerate().all(|(i, page)| {
-                let valid_suffix =
-                    line[i..].iter().all(|x| {
-                        rules.get(x).is_none_or(|set| {
-                            !set.contains(page)
-                        })
-                    });
+                let suffix = &line[i + 1..];
+                let valid_suffix = suffix.iter().all(|x| {
+                    rules.get(x).is_none_or(|set| {
+                        !set.contains(page)
+                    })
+                });
 
-                let valid_prefix =
-                    line[..i].iter().all(|x| {
-                        rev_rules.get(x).is_none_or(|set| {
-                            !set.contains(page)
-                        })
-                    });
+                let prefix = &line[..i];
+                let valid_prefix = prefix.iter().all(|x| {
+                    rev_rules.get(x).is_none_or(|set| {
+                        !set.contains(page)
+                    })
+                });
 
                 valid_prefix && valid_suffix
             })

@@ -1,35 +1,27 @@
 use nom::{
     IResult, Parser,
     bytes::complete::tag,
-    character::complete::{newline, u32},
+    character::complete::{line_ending, u32},
     multi::separated_list1,
-    sequence::separated_pair,
+    sequence::{pair, separated_pair},
 };
 
 use crate::{Puzzle, error::AocError};
 
-pub fn parse_rules(
-    input: &str,
-) -> IResult<&str, Vec<(u32, u32)>, ()> {
-    let rule = separated_pair(u32, tag("|"), u32);
-    separated_list1(newline, rule).parse(input)
-}
-
-pub fn parse_updates(
-    input: &str,
-) -> IResult<&str, Vec<Vec<u32>>, ()> {
-    let pages = separated_list1(tag(","), u32);
-    separated_list1(newline, pages).parse(input)
-}
-
 pub fn parse_puzzle(
     input: &str,
 ) -> IResult<&str, Puzzle, ()> {
-    separated_pair(parse_rules, tag("\n\n"), parse_updates)
-        .map(|(rules, pages)| Puzzle {
-            rules,
-            lines: pages,
-        })
+    let rules = separated_list1(
+        line_ending,
+        separated_pair(u32, tag("|"), u32),
+    );
+    let updates = separated_list1(
+        line_ending,
+        separated_list1(tag(","), u32),
+    );
+    let empty_line = pair(line_ending, line_ending);
+    separated_pair(rules, empty_line, updates)
+        .map(|(rules, lines)| Puzzle { rules, lines })
         .parse(input)
 }
 
